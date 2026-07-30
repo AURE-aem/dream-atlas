@@ -1,0 +1,43 @@
+{
+  "name": "dream-explorer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "predev": "node scripts/clean-next.mjs",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "demo:import": "node scripts/import-dream-library.mjs",
+    "tour:setup": "playwright install chromium ffmpeg",
+    "tour:empty": "node scripts/tour-dream-atlas.mjs empty",
+    "tour:demo": "node scripts/tour-dream-atlas.mjs demo",
+    "tour:llm": "node scripts/tour-dream-atlas.mjs llm",
+    "tour:empty:quick": "node scripts/tour-dream-atlas.mjs empty --headless --no-pause --no-video",
+    "tour:demo:quick": "node scripts/tour-dream-atlas.mjs demo --headless --no-pause --no-video",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "check": "npm run test && npm run typecheck && npm run lint",
+    "validate": "npm run check && npm run build"
+  },
+  "dependencies": {
+    "extract-zip": "2.0.1",
+    "framer-motion": "^12.42.2",
+    "next": "16.2.11",
+    "openai": "^6.49.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.11",
+    "playwright": "1.62.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
