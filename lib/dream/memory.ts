@@ -7,6 +7,10 @@ import type {
 
 const MAX_ECHOES = 5;
 
+function motifKey(symbol: RecurringSymbol): string {
+  return normalizeSymbol(symbol.family ?? symbol.symbol);
+}
+
 export function buildMemoryContext({
   currentSymbols,
   previousDreams,
@@ -16,7 +20,7 @@ export function buildMemoryContext({
 }): MemoryContext {
   const currentSymbolNames = new Set(
     currentSymbols
-      .map(({ symbol }) => normalizeSymbol(symbol))
+      .map((symbol) => motifKey(symbol))
       .filter(Boolean),
   );
 
@@ -25,7 +29,7 @@ export function buildMemoryContext({
   for (const symbol of currentSymbolNames) {
     const relatedDreams = previousDreams.filter((dream) =>
       dream.recurringSymbols?.some(
-        (candidate) => normalizeSymbol(candidate.symbol) === symbol,
+        (candidate) => motifKey(candidate) === symbol,
       ),
     );
 
@@ -36,7 +40,7 @@ export function buildMemoryContext({
     const totalPreviousOccurrences = relatedDreams.reduce(
       (total, dream) => {
         const matchingSymbol = dream.recurringSymbols.find(
-          (candidate) => normalizeSymbol(candidate.symbol) === symbol,
+          (candidate) => motifKey(candidate) === symbol,
         );
 
         return total + (matchingSymbol?.count ?? 1);

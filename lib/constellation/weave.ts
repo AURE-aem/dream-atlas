@@ -4,6 +4,7 @@ import type {
   Constellation,
   ConstellationInsight,
   GeneratedDream,
+  RecurringSymbol,
 } from "@/types/dream";
 
 export type ConstellationPlan = {
@@ -15,8 +16,16 @@ function normalize(value: string): string {
   return value.trim().toLowerCase();
 }
 
+function motifKey(symbol: RecurringSymbol): string {
+  return normalize(symbol.family ?? symbol.symbol);
+}
+
 function motifsOf(dream: GeneratedDream): string[] {
-  return [...new Set(dream.recurringSymbols.map(({ symbol }) => normalize(symbol)))];
+  return [
+    ...new Set(
+      dream.recurringSymbols.map((symbol) => motifKey(symbol)),
+    ),
+  ];
 }
 
 function sharedMotifs(left: string[], right: string[]): string[] {
@@ -26,14 +35,23 @@ function sharedMotifs(left: string[], right: string[]): string[] {
 
 function fallbackName(motifs: string[]): string {
   const lead = motifs[0] ?? "memory";
+
   const names: Record<string, string> = {
     darkness: "The Unlit Threshold",
     door: "Doors That Return",
     forest: "The Moonlit Forest",
     moon: "Under the Returning Moon",
     water: "The Returning Tide",
+    animal: "The Returning Creatures",
+    "night sky": "The Celestial Path",
+    machine: "The Mechanical Dream",
+    journey: "The Returning Road",
   };
-  return names[lead] ?? `The Returning ${lead.charAt(0).toUpperCase()}${lead.slice(1)}`;
+
+  return (
+    names[lead] ??
+    `The Returning ${lead.charAt(0).toUpperCase()}${lead.slice(1)}`
+  );
 }
 
 export function planConstellation({
@@ -46,7 +64,10 @@ export function planConstellation({
   constellations: Constellation[];
 }): ConstellationPlan | undefined {
   const currentMotifs = motifsOf(newDream);
-  if (currentMotifs.length === 0) return undefined;
+
+  if (currentMotifs.length === 0) {
+    return undefined;
+  }
 
   const related = previousDreams
     .map((dream) => ({
@@ -59,7 +80,10 @@ export function planConstellation({
   const existing = constellations
     .map((constellation) => ({
       constellation,
-      overlap: sharedMotifs(currentMotifs, constellation.motifs).length,
+      overlap: sharedMotifs(
+        currentMotifs,
+        constellation.motifs,
+      ).length,
     }))
     .filter(({ overlap }) => overlap > 0)
     .sort(
@@ -75,7 +99,11 @@ export function planConstellation({
         ...related.flatMap(({ shared }) => shared),
       ]),
     ].slice(0, 6);
-    const dreamIds = [...new Set([...existing.dreamIds, newDream.id])];
+
+    const dreamIds = [
+      ...new Set([...existing.dreamIds, newDream.id]),
+    ];
+
     return {
       existing,
       insight: {
@@ -85,16 +113,24 @@ export function planConstellation({
         summary: `${motifs.slice(0, 3).join(", ")} returned in another preserved memory, adding a new point to this pattern.`,
         motifs,
         dreamIds,
-        confidence: Math.min(0.98, existing.confidence + 0.03),
+        confidence: Math.min(
+          0.98,
+          existing.confidence + 0.03,
+        ),
       },
     };
   }
 
-  if (related.length < 2) return undefined;
+  if (related.length < 2) {
+    return undefined;
+  }
 
   const motifs = [
-    ...new Set(related.flatMap(({ shared }) => shared)),
+    ...new Set(
+      related.flatMap(({ shared }) => shared),
+    ),
   ].slice(0, 6);
+
   const dreamIds = [
     newDream.id,
     ...related.slice(0, 5).map(({ dream }) => dream.id),
@@ -118,6 +154,7 @@ export function materializeConstellation(
   now = new Date().toISOString(),
 ): Constellation {
   const id = plan.existing?.id ?? randomUUID();
+
   return {
     id,
     createdAt: plan.existing?.createdAt ?? now,

@@ -1,5 +1,6 @@
 export type RecurringSymbol = {
   symbol: string;
+  family?: string;
   count: number;
 };
 
