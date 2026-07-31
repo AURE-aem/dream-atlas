@@ -63,5 +63,10 @@ export async function generateAtlasNarration({
     ),
   });
 
+  console.log(
+    "[atlas_narration] RESULT",
+    narration,
+  );
+
   return ensureVerbatimDreamCore(narration ?? fallback, normalizedDream);
 }

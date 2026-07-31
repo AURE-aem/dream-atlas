@@ -23,7 +23,11 @@ function parseQuestions(value: string): string[] {
   const questions = value
     .split("\n")
     .map((line) => line.replace(/^\s*[-*\d.)]+\s*/, "").trim())
-    .filter((line) => line.endsWith("?") && line.split(/\s+/).length <= 14);
+    .filter(
+      (line) =>
+        line.endsWith("?") &&
+        line.split(/\s+/).length <= 14,
+    );
 
   return [...new Set(questions)].slice(0, 3);
 }
@@ -35,13 +39,42 @@ export async function generateReflectionQuestions({
   dream: string;
   observation: string;
 }): Promise<string[]> {
+  console.log("[reflection_questions] START");
+
   const value = await runTextAgent({
     name: "reflection_questions",
     instructions: INSTRUCTIONS,
     input: `Remembered dream:\n${dream}\n\nObservation:\n${observation}`,
     maxOutputTokens: 100,
   });
-  const parsed = value ? parseQuestions(value) : [];
 
-  return parsed.length === 3 ? parsed : [...FALLBACK_QUESTIONS];
+  console.log(
+    "[reflection_questions] RAW RESULT",
+    value,
+  );
+
+  const parsed = value
+    ? parseQuestions(value)
+    : [];
+
+  console.log(
+    "[reflection_questions] PARSED",
+    parsed,
+  );
+
+  if (parsed.length !== 3) {
+    console.log(
+      "[reflection_questions] FALLBACK",
+      FALLBACK_QUESTIONS,
+    );
+
+    return [...FALLBACK_QUESTIONS];
+  }
+
+  console.log(
+    "[reflection_questions] SUCCESS",
+    parsed,
+  );
+
+  return parsed;
 }

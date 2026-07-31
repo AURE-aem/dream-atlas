@@ -41,6 +41,8 @@ Return JSON only with "constellationName" and "summary".
     maxOutputTokens: 180,
   });
 
+  console.log("[ConstellationWeaver] RAW RESPONSE", response);
+  
   if (!response) return candidate;
 
   try {
@@ -64,4 +66,5 @@ Return JSON only with "constellationName" and "summary".
   } catch {
     return candidate;
   }
+
 }

@@ -85,7 +85,9 @@ export function createFallbackTitle(dream: string): string {
     : `${opening} the ${noun}`;
 }
 
-export async function generateDreamTitle(dream: string): Promise<string> {
+export async function generateDreamTitle(
+  dream: string,
+): Promise<string> {
   const normalizedDream = dream.trim();
   const fallback = createFallbackTitle(normalizedDream);
 
@@ -93,13 +95,28 @@ export async function generateDreamTitle(dream: string): Promise<string> {
     return fallback;
   }
 
+  console.log("[dream_title] START");
+
   const value = await runTextAgent({
     name: "dream_title",
     instructions: TITLE_INSTRUCTIONS,
     input: `Remembered dream:\n${normalizedDream}`,
     maxOutputTokens: 30,
   });
+
+  console.log("[dream_title] RAW RESULT", value);
+
   const title = cleanTitle(value ?? "");
 
-  return isValidTitle(title) ? title : fallback;
+  console.log("[dream_title] CLEAN TITLE", title);
+
+  if (!isValidTitle(title)) {
+    console.log("[dream_title] FALLBACK", fallback);
+    return fallback;
+  }
+
+  console.log("[dream_title] SUCCESS", title);
+
+  return title;
 }
+

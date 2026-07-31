@@ -39,9 +39,15 @@ export async function generatePlayfulInterpretation({
     currentSymbols,
     previousDreams,
   });
+
   const fallback = createPlayfulInterpretationFallback(motifs);
 
-  if (motifs.length === 0) return fallback;
+  if (motifs.length === 0) {
+    console.log("[MotifStoryteller] NO_MOTIFS");
+    return fallback;
+  }
+
+  console.log("[MotifStoryteller] START");
 
   const response = await runTextAgent({
     name: "MotifStoryteller",
@@ -50,12 +56,20 @@ export async function generatePlayfulInterpretation({
     maxOutputTokens: 260,
   });
 
-  if (!response) return fallback;
+  console.log("[MotifStoryteller] RAW RESPONSE", response);
+
+  if (!response) {
+    console.log("[MotifStoryteller] FALLBACK_NO_RESPONSE");
+    return fallback;
+  }
 
   try {
     const parsed = JSON.parse(
       response.replace(/^```json\s*|\s*```$/g, ""),
-    ) as { title?: unknown; text?: unknown };
+    ) as {
+      title?: unknown;
+      text?: unknown;
+    };
 
     if (
       typeof parsed.title !== "string" ||
@@ -63,19 +77,36 @@ export async function generatePlayfulInterpretation({
       typeof parsed.text !== "string" ||
       !parsed.text.trim()
     ) {
+      console.log("[MotifStoryteller] FALLBACK_INVALID_JSON");
       return fallback;
     }
 
     const wordCount = parsed.text.trim().split(/\s+/).length;
-    if (wordCount < 55 || wordCount > 140) return fallback;
 
-    return {
+    if (wordCount < 55 || wordCount > 140) {
+      console.log(
+        "[MotifStoryteller] FALLBACK_WORD_COUNT",
+        wordCount,
+      );
+      return fallback;
+    }
+
+    const result: PlayfulInterpretation = {
       title: parsed.title.trim().slice(0, 90),
       text: parsed.text.trim().slice(0, 900),
       motifs: motifs.map(({ symbol }) => symbol),
       source: "ai",
     };
-  } catch {
+
+    console.log("[MotifStoryteller] SUCCESS", result);
+
+    return result;
+  } catch (error) {
+    console.log(
+      "[MotifStoryteller] JSON_PARSE_FAILED",
+      error,
+    );
+
     return fallback;
   }
 }

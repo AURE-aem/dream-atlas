@@ -35,6 +35,8 @@ export async function generateDreamObservation({
     return FALLBACK_OBSERVATION;
   }
 
+  console.log("[dream_observation] START");
+
   const observation = await runTextAgent({
     name: "dream_observation",
     instructions: OBSERVATION_INSTRUCTIONS,
@@ -47,6 +49,15 @@ ${normalizedNarration}
     `.trim(),
     maxOutputTokens: 50,
   });
+
+  console.log(
+    "[dream_observation] RESULT",
+    observation,
+  );
+
+  if (!observation) {
+    console.log("[dream_observation] FALLBACK");
+  }
 
   return observation ?? FALLBACK_OBSERVATION;
 }

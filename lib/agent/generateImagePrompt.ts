@@ -41,6 +41,8 @@ export async function generateImagePrompt({
     return FALLBACK_IMAGE_PROMPT;
   }
 
+  console.log("[image_prompt] START");
+
   const imagePrompt = await runTextAgent({
     name: "image_prompt",
     instructions: IMAGE_PROMPT_INSTRUCTIONS,
@@ -56,6 +58,15 @@ ${normalizedNarration}
     `.trim(),
     maxOutputTokens: 100,
   });
+
+  console.log(
+    "[image_prompt] RESULT",
+    imagePrompt,
+  );
+
+  if (!imagePrompt) {
+    console.log("[image_prompt] FALLBACK");
+  }
 
   return imagePrompt ?? FALLBACK_IMAGE_PROMPT;
 }

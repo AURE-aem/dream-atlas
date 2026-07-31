@@ -111,7 +111,6 @@ const CANONICAL_FAMILIES: Record<string, string> = {
   window: "building",
   room: "building",
   corridor: "building",
-  
 };
 
 function canonicalFamily(
@@ -146,8 +145,7 @@ function parseRecurringSymbols(
         (item): item is RecurringSymbol =>
           typeof item === "object" &&
           item !== null &&
-          typeof (item as RecurringSymbol).symbol ===
-            "string" &&
+          typeof (item as RecurringSymbol).symbol === "string" &&
           Number.isFinite(
             (item as RecurringSymbol).count,
           ),
@@ -282,13 +280,33 @@ export async function generateRecurringSymbols(
     maxOutputTokens: 180,
   });
 
-    console.log("SYMBOL_AGENT_RAW", value);
-    
+  console.log("SYMBOL_AGENT_RAW", value);
+
   const parsed = value
     ? parseRecurringSymbols(value)
     : [];
 
-  return parsed.length > 0
-    ? parsed
-    : extractFallbackMotifs(normalizedDream);
+  console.log(
+    "SYMBOL_AGENT_PARSED",
+    JSON.stringify(parsed, null, 2),
+  );
+
+  if (parsed.length === 0) {
+    const fallback =
+      extractFallbackMotifs(normalizedDream);
+
+    console.log(
+      "SYMBOL_AGENT_FALLBACK",
+      JSON.stringify(fallback, null, 2),
+    );
+
+    return fallback;
+  }
+
+  console.log(
+    "SYMBOL_AGENT_SUCCESS",
+    JSON.stringify(parsed, null, 2),
+  );
+
+  return parsed;
 }

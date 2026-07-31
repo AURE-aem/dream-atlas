@@ -15,10 +15,17 @@ export async function runTextAgent({
   maxOutputTokens,
 }: RunTextAgentInput): Promise<string | null> {
   if (!dreamAiConfig.enabled || !openai) {
+    console.log("[AI AGENT SKIPPED]", name, {
+      enabled: dreamAiConfig.enabled,
+      hasOpenAI: Boolean(openai),
+    });
+
     return null;
   }
 
   try {
+    console.log("[AI AGENT START]", name);
+
     const response = await openai.responses.create({
       model: dreamAiConfig.model,
       instructions,
@@ -26,10 +33,15 @@ export async function runTextAgent({
       max_output_tokens: maxOutputTokens,
     });
 
+    console.log("[AI AGENT SUCCESS]", name);
+
     const value = response.output_text.trim();
+
+    console.log("[AI AGENT RESULT]", name, value);
+
     return value || null;
   } catch (error) {
-    console.error("Dream agent failed", {
+    console.error("[AI AGENT FAILED]", {
       agent: name,
       error,
     });
