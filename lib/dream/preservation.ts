@@ -1,4 +1,4 @@
-export const MIN_PRESERVATION_VISIBLE_MS = 5000;
+export const MIN_PRESERVATION_VISIBLE_MS = 2600;
 
 type WaitForMinimumDurationInput = {
   startedAt: number;
