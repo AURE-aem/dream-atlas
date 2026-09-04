@@ -1,7 +1,7 @@
 import path from "node:path";
 
 export function getDreamAtlasDataDirectory(
-  collection: "dreams" | "constellations",
+  collection: "dreams" | "constellations" | "users",
 ): string {
   const configuredRoot = process.env.DREAM_ATLAS_DATA_DIR?.trim();
   const dataRoot = configuredRoot
