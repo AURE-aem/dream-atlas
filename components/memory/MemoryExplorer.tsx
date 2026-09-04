@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+import LogoutButton from "@/components/auth/LogoutButton";
 import DreamCardGallery from "@/components/memory/DreamCardGallery";
 import MemorySearch from "@/components/memory/MemorySearch";
 import MemoryTimeline from "@/components/memory/MemoryTimeline";
@@ -69,12 +70,16 @@ export default function MemoryExplorer({
           >
             <span>✦</span> Dream Atlas
           </Link>
-          <Link
-            href="/preserve"
-            className="rounded-full border border-white/14 bg-white/[0.045] px-5 py-3 text-[10px] uppercase tracking-[0.22em] text-white/64 transition hover:border-white/30 hover:text-white"
-          >
-            Preserve a dream
-          </Link>
+          <div className="flex items-center gap-3 sm:gap-5">
+            <Link
+              href="/preserve"
+              className="rounded-full border border-white/14 bg-white/[0.045] px-3 py-3 text-[10px] uppercase tracking-[0.18em] text-white/64 transition hover:border-white/30 hover:text-white sm:px-5 sm:tracking-[0.22em]"
+            >
+              Preserve a dream
+            </Link>
+
+            <LogoutButton />
+          </div>
         </header>
 
         <section className="pb-10 pt-20 text-center sm:pt-24">
