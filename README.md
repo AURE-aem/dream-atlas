@@ -138,6 +138,48 @@ npm run build
 
 ---
 
+### Playwright E2E Tests
+
+Install dependencies and the Chromium browser:
+
+```bash
+npm ci
+npx playwright install chromium
+```
+
+Create a `.env.local` file based on `.env.example` and replace both placeholders with random values containing at least 32 characters:
+
+```env
+SESSION_SECRET=replace-with-a-random-secret
+TEST_API_TOKEN=replace-with-a-random-test-api-token
+```
+
+The OpenAI API key is not required to run the authentication E2E tests.
+
+Run the complete Playwright test suite:
+
+```bash
+npm run test:e2e
+```
+
+Run the desktop and mobile projects separately:
+
+```bash
+npx playwright test --project=desktop-chrome
+npx playwright test --project=mobile-chrome
+```
+
+Additional commands:
+
+```bash
+npm run test:e2e:headed
+npm run test:e2e:report
+```
+
+Playwright starts the application automatically at `http://localhost:3000`. To test another running environment, set the `PLAYWRIGHT_BASE_URL` environment variable.
+
+---
+
 ## Hackathon Demo Walkthrough
 
 1. Open the Atlas and hover over a star.
