@@ -3,6 +3,8 @@ import path from "node:path";
 
 import { defineConfig, devices } from "@playwright/test";
 
+import { storageStatePath } from "./e2e/helpers/auth-state";
+
 const localEnvPath = path.resolve(process.cwd(), ".env.local");
 
 if (existsSync(localEnvPath)) {
@@ -40,15 +42,38 @@ export default defineConfig({
 
   projects: [
     {
+      name: "auth-setup",
+      testMatch: /auth\.setup\.ts/,
+      teardown: "auth-cleanup",
+      use: {
+        ...devices["Desktop Chrome"],
+      },
+    },
+    {
+      name: "auth-cleanup",
+      testMatch: /auth\.cleanup\.ts/,
+    },
+    {
       name: "desktop-chrome",
+      testMatch: /dreams\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
       },
     },
     {
       name: "mobile-chrome",
+      testMatch: /dreams\.spec\.ts/,
       use: {
         ...devices["Pixel 7"],
+      },
+    },
+    {
+      name: "authenticated-chrome",
+      testMatch: /session\.spec\.ts/,
+      dependencies: ["auth-setup"],
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: storageStatePath,
       },
     },
   ],
