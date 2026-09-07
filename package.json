@@ -18,11 +18,9 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
-    "test": "node --experimental-strip-types --test tests/*.test.ts",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report",
-    "check": "npm run test && npm run typecheck && npm run lint",
     "check": "npm run test && npm run typecheck && npm run lint",
     "validate": "npm run check && npm run build"
   },
